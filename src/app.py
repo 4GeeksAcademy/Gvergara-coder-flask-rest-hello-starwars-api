@@ -56,7 +56,7 @@ def get_characters():
     characters = Character.query.all()
     characters_serialized = []
     for character in characters:
-        characters_serialized.append(character.serialized())
+        characters_serialized.append(character.serialize())
     print(characters_serialized)
 
     response_body = {
@@ -70,7 +70,7 @@ def get_planets():
     planets = Planets.query.all()
     planets_serialized = []
     for planet in planets:
-        planets_serialized.append(planet.serialized())
+        planets_serialized.append(planet.serialize())
     print(planets_serialized)
 
     response_body = {
@@ -84,7 +84,7 @@ def get_starships():
     starships = Starships.query.all()
     starships_serialized = []
     for starship in starships:
-        starships_serialized.append(starship.serialized())
+        starships_serialized.append(starship.serialize())
     print(starships_serialized)
 
     response_body = {
