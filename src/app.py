@@ -93,6 +93,18 @@ def get_starships():
 
     return jsonify(response_body), 200
 
+@app.route('/users/<int:user_id>', methods=['GET'])
+def get_user(user_id):
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({'message': 'User not found'}), 404
+
+    response_body = {
+        'data': user.serialize()
+    }
+
+    return jsonify(response_body), 200
+
 @app.route('/character/<int:character_id>', methods=['GET'])
 def get_character(character_id):
     character = Character.query.get(character_id)
@@ -132,7 +144,7 @@ def get_starship(starship_id):
 @app.route('/favoritecharacter', methods=['GET'])
 def get_favorite_characters():
     favorite_characters = FavoriteCharacters.query.all()
-    print(favorite_character)
+    print(favorite_characters)
     favorite_characters_serialized = []
     for favorite_character in favorite_characters:
         favorite_characters_serialized.append(favorite_character.serialize())
@@ -173,6 +185,29 @@ def get_favorite_starships():
     }
 
     return jsonify(response_body), 200
+
+@app.route('/user', methods=['POST'])
+def create_user():
+    data = request.get_json()
+
+    if not data or not all(key in data for key in ('email', 'password', 'firstName', 'lastName')):
+        return jsonify({'message': 'Missing required fields'}), 400
+
+    if User.query.filter_by(email=data['email']).first():
+        return jsonify({'message': 'Email already exists'}), 400
+
+    new_user = User(
+        email=data['email'],
+        password=data['password'], 
+        firstName=data['firstName'],
+        lastName=data['lastName'],
+        is_active=True
+    )
+
+    db.session.add(new_user)
+    db.session.commit()
+
+    return jsonify({'message': 'User created successfully', 'user': new_user.serialize()}), 201
 
 @app.route('/favorite/planet/<int:planet_id>', methods=['POST'])
 def add_favorite_planet(planet_id):
