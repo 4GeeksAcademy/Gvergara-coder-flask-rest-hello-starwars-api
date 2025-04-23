@@ -34,6 +34,13 @@ class User(db.Model):
             'is_active': self.is_active
         }
     
+    def serialize_favorites(self):
+        return {
+            'characters': [fc.serialize() for fc in self.favorites_characters] if len(self.favorites_characters) > 0 else [],
+            'planets': [fp.serialize() for fp in self.favorites_planets] if len(self.favorites_planets) > 0 else [],
+            'starships': [fs.serialize() for fs in self.favorites_starships] if len(self.favorites_starships) > 0 else []
+         }
+    
 
 
 class Character(db.Model):
@@ -107,11 +114,7 @@ class FavoriteCharacters(db.Model):
         return f'{self.character.name}'
 
     def serialize(self):
-        return {
-            'id': self.id,
-            'user_id': self.user_id,
-            'character_id': self.character_id
-        }
+        return self.character.serialize()  # Use the serialize method of the character
 
 
 class FavoritePlanets(db.Model):
@@ -127,11 +130,7 @@ class FavoritePlanets(db.Model):
         return f'{self.planet.name}'
 
     def serialize(self):
-        return {
-            'id': self.id,
-            'user_id': self.user_id,
-            'planet_id': self.planet_id
-        }
+        return self.planet.serialize()  # Use the serialize method of the planet
 
 
 class FavoriteStarships(db.Model):
@@ -147,8 +146,4 @@ class FavoriteStarships(db.Model):
         return f'{self.starship.name}'
 
     def serialize(self):
-        return {
-            'id': self.id,
-            'user_id': self.user_id,
-            'starship_id': self.starship_id
-        }
+        return self.starship.serialize()

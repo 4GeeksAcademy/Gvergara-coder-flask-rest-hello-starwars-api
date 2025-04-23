@@ -186,14 +186,12 @@ def get_favorite_starships():
 
     return jsonify(response_body), 200
 
-@app.route('/user/favorites/<int:user_id>', methods=['GET'])
+@app.route('/user/<int:user_id>/favorites', methods=['GET'])
 def get_favorites(user_id):
     user = User.query.get(user_id)
-    print(user.favorites_characters)
-    favorites_serialized = []
-    for favorite_character in user.favorites_characters:    
-        favorites_serialized.append(favorite_character.serialize())
-    return jsonify({'msg': 'ok', 'favoritos': favorites_serialized}), 200
+    if not user:
+        return jsonify({'msg': 'User not found'}), 404
+    return jsonify(user.serialize_favorites()), 200
 
 @app.route('/user', methods=['POST'])
 def create_user():
