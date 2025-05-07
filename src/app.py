@@ -216,45 +216,66 @@ def create_user():
 
     return jsonify({'message': 'User created successfully', 'user': new_user.serialize()}), 201
 
-@app.route('/favorite/planet/<int:planet_id>', methods=['POST'])
-def add_favorite_planet(planet_id):
+@app.route('/favorite/planet/<int:planet_id>/user/<int:user_id>', methods=['POST'])
+def add_favorite_planet(planet_id, user_id):
     planet = Planets.query.get(planet_id)
     if not planet:
         return jsonify({'message': 'Planet not found'}), 404
+    
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({'message': 'User not found'}), 404
+    
+    if FavoritePlanets.query.filter_by(planet_id=planet_id, user_id=user_id).first():
+        return jsonify({'message': 'Planet already in favorites'}), 400
 
-    favorite_planet = FavoritePlanets(planet_id=planet_id)
+    favorite_planet = FavoritePlanets(planet_id=planet_id, user_id=user_id)
     db.session.add(favorite_planet)
     db.session.commit()
 
     return jsonify({'message': f'Planet {planet_id} added to favorites'}), 201
 
-@app.route('/favorite/character/<int:character_id>', methods=['POST'])
-def add_favorite_character(character_id):
+@app.route('/favorite/character/<int:character_id>/user/<int:user_id>', methods=['POST'])
+def add_favorite_character(character_id, user_id):
     character = Character.query.get(character_id)
     if not character:
         return jsonify({'message': 'Character not found'}), 404
+    
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({'message': 'User not found'}), 404
+    
+    if FavoriteCharacters.query.filter_by(character_id=character_id, user_id=user_id).first():
+        return jsonify({'message': 'Character already in favorites'}), 400
 
-    favorite_character = FavoriteCharacters(character_id=character_id)
+    favorite_character = FavoriteCharacters(character_id=character_id, user_id=user_id)
     db.session.add(favorite_character)
     db.session.commit()
 
     return jsonify({'message': f'Character {character_id} added to favorites'}), 201
 
-@app.route('/favorite/starship/<int:starship_id>', methods=['POST'])
-def add_favorite_starship(starship_id):
+@app.route('/favorite/starship/<int:starship_id>/user/<int:user_id>', methods=['POST'])
+def add_favorite_starship(starship_id, user_id):
     starship = Starships.query.get(starship_id)
     if not starship:
         return jsonify({'message': 'Starship not found'}), 404
-
-    favorite_starship = FavoriteStarships(starship_id=starship_id)
+    
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({'message': 'User not found'}), 404
+    
+    if FavoriteStarships.query.filter_by(starship_id=starship_id, user_id=user_id).first():
+        return jsonify({'message': 'Starship already in favorites'}), 400
+    
+    favorite_starship = FavoriteStarships(starship_id=starship_id, user_id=user_id)
     db.session.add(favorite_starship)
     db.session.commit()
 
     return jsonify({'message': f'Starship {starship_id} added to favorites'}), 201
 
-@app.route('/favorite/planet/<int:planet_id>', methods=['DELETE'])
-def remove_favorite_planet(planet_id):
-    favorite_planet = FavoritePlanets.query.filter_by(planet_id=planet_id).first()
+@app.route('/favorite/planet/<int:planet_id>/user/<int:user_id>', methods=['DELETE'])
+def remove_favorite_planet(planet_id, user_id):
+    favorite_planet = FavoritePlanets.query.filter_by(planet_id=planet_id, user_id=user_id).first()
     if not favorite_planet:
         return jsonify({'message': 'Favorite planet not found'}), 404
 
@@ -263,9 +284,9 @@ def remove_favorite_planet(planet_id):
 
     return jsonify({'message': f'Planet {planet_id} removed from favorites'}), 200
 
-@app.route('/favorite/character/<int:character_id>', methods=['DELETE'])
-def remove_favorite_character(character_id):
-    favorite_character = FavoriteCharacters.query.filter_by(character_id=character_id).first()
+@app.route('/favorite/character/<int:character_id>/user/<int:user_id>', methods=['DELETE'])
+def remove_favorite_character(character_id, user_id):
+    favorite_character = FavoriteCharacters.query.filter_by(character_id=character_id, user_id=user_id).first()
     if not favorite_character:
         return jsonify({'message': 'Favorite character not found'}), 404
 
@@ -274,9 +295,9 @@ def remove_favorite_character(character_id):
 
     return jsonify({'message': f'Character {character_id} removed from favorites'}), 200
 
-@app.route('/favorite/starship/<int:starship_id>', methods=['DELETE'])
-def remove_favorite_starship(starship_id):
-    favorite_starship = FavoriteStarships.query.filter_by(starship_id=starship_id).first()
+@app.route('/favorite/starship/<int:starship_id>/user/<int:user_id>', methods=['DELETE'])
+def remove_favorite_starship(starship_id, user_id):
+    favorite_starship = FavoriteStarships.query.filter_by(starship_id=starship_id, user_id=user_id).first()
     if not favorite_starship:
         return jsonify({'message': 'Favorite starship not found'}), 404
 
